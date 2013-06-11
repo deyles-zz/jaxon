@@ -1,0 +1,22 @@
+{
+  "private": false,
+  "version": "0.0.1",
+  "name": "jaxon",
+  "description": "JSON stream parser",
+  "author": "Dan Eyles <dan@irlgaming.com>",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:dan-eyles/jaxon.git"
+  },
+  "engine": "node >= 0.10",
+  "dependencies": {},
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "expresso tests/*"
+  },
+  "readmeFilename": "README.md",
+  "directories": {
+    "test": "test"
+  },
+  "license": "BSD"
+}
