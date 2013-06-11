@@ -38,6 +38,15 @@ jaxon.parse('http://awesomeservice.com/hello-world', {}, function(err) {
 });
 ```
 
+Parsing JSON streams from files on disk is just as easy:
+
+```javascript
+var jaxon = require('jaxon');
+jaxon.parse('file:///tmp/myfile.json', {}, function(err) {
+   console.log(err);
+});
+```
+
 If you want to subscribe to be notified whenever a key named *foo* is encountered in
 the stream just add the following code:
 
