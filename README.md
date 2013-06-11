@@ -33,7 +33,8 @@ as it's streamed via HTTP can be achieved using code like the following:
 
 ```javascript
 var jaxon = require('jaxon');
-jaxon.parse('http://awesomeservice.com/hello-world', {}, function(err) {
+var j = jaxon.factoryJaxon();
+j.parse('http://awesomeservice.com/hello-world', {}, function(err) {
    console.log(err);
 });
 ```
@@ -42,7 +43,8 @@ Parsing JSON streams from files on disk is just as easy:
 
 ```javascript
 var jaxon = require('jaxon');
-jaxon.parse('file:///tmp/myfile.json', {}, function(err) {
+var j = jaxon.factoryJaxon();
+j.parse('file:///tmp/myfile.json', {}, function(err) {
    console.log(err);
 });
 ```
@@ -51,7 +53,7 @@ If you want to subscribe to be notified whenever a key named *foo* is encountere
 the stream just add the following code:
 
 ```javascript
-jaxon.on('parse', 'foo', function(err, data) {
+j.on('parse', 'foo', function(err, data) {
    // do something awesome
 });
 ```
@@ -60,7 +62,7 @@ If you're feeling capricious and want to do fuzzy matching on key names you can 
 regular expressions: 
 
 ```javascript
-jaxon.on('match', /^(foo|bar)$/, function(err, data) {
+j.on('match', /^(foo|bar)$/, function(err, data) {
    // mind. blown.
 });
 ```
@@ -70,7 +72,7 @@ feed it garbage. If you want to receive errors generated during parsing (as they
 you can do something like this:
 
 ```javascript
-jaxon.on('error', function(err) {
+j.on('error', function(err) {
    // handle the error... like a boss
 });
 ```
