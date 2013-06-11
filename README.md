@@ -42,7 +42,7 @@ If you want to subscribe to be notified whenever a key named *foo* is encountere
 the stream just add the following code:
 
 ```javascript
-jaxon.on('parsed', 'foo', function(err, data) {
+jaxon.on('parse', 'foo', function(err, data) {
    // do something awesome
 });
 ```
@@ -51,7 +51,7 @@ If you're feeling capricious and want to do fuzzy matching on key names you can 
 regular expressions: 
 
 ```javascript
-jaxon.on('matched', /^(foo|bar)$/, function(err, data) {
+jaxon.on('match', /^(foo|bar)$/, function(err, data) {
    // mind. blown.
 });
 ```
