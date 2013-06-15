@@ -2,7 +2,7 @@
   "private": false,
   "version": "0.0.1",
   "name": "jaxon",
-  "description": "JSON stream parser",
+  "description": "Jaxon is a sequential access, event-driven JSON parser developed specifically to deal with streams.",
   "author": "Dan Eyles <dan@irlgaming.com>",
   "repository": {
     "type": "git",
