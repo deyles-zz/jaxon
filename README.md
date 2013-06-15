@@ -33,8 +33,7 @@ as it's streamed via HTTP can be achieved using code like the following:
 
 ```javascript
 var jaxon = require('jaxon');
-var j = jaxon.factoryJaxon();
-j.parse('http://awesomeservice.com/hello-world', {}, function(err) {
+jaxon.factory().parse('http://awesomeservice.com/hello-world', {}, function(err) {
    console.log(err);
 });
 ```
@@ -43,8 +42,7 @@ Parsing JSON streams from files on disk is just as easy:
 
 ```javascript
 var jaxon = require('jaxon');
-var j = jaxon.factoryJaxon();
-j.parse('file:///tmp/myfile.json', {}, function(err) {
+jaxon.factory().parse('file:///tmp/myfile.json', {}, function(err) {
    console.log(err);
 });
 ```
@@ -53,18 +51,18 @@ If you want to subscribe to be notified whenever a key named *foo* is encountere
 the stream just add the following code:
 
 ```javascript
-j.on('parse', 'foo', function(err, data) {
+jaxon.factory().on('parse', 'foo', function(err, data) {
    // do something awesome
-});
+}).parse('file:///tmp/myfile.json');
 ```
 
 If you're feeling capricious and want to do fuzzy matching on key names you can use
 regular expressions: 
 
 ```javascript
-j.on('match', /^(foo|bar)$/, function(err, data) {
+jaxon.factory().on('match', /^(foo|bar)$/, function(err, data) {
    // mind. blown.
-});
+}).parse('file:///tmp/myfile.json');
 ```
 
 Jaxon is generally pretty tolerant of poorly formed JSON and will keep parsing even if you
@@ -72,9 +70,15 @@ feed it garbage. If you want to receive errors generated during parsing (as they
 you can do something like this:
 
 ```javascript
-j.on('error', function(err) {
+jaxon.factory().on('error', function(err) {
    // handle the error... like a boss
-});
+}).parse('file:///tmp/myfile.json');
+```
+
+Bringing it all together:
+
+```javascript
+jaxon.factory().on('parse', 'guid', function(o) { process.stdout.write(o + '\n'); }).parse('http://f0e43e0449ff85b5a83a-8d88610b03123726d01e576fafeaf9d4.r60.cf2.rackcdn.com/test3.json');
 ```
 
 # Other stuff.

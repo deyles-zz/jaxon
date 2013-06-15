@@ -25,27 +25,41 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+var fs    = require('fs');
 var jaxon = require('../lib/jaxon');
 
 exports['test Jaxon1'] = function(beforeExit, assert) {   
-    var j = jaxon.factoryJaxon();
-    j.on('parse', 'onMouseUp', function(err, o) {
-        assert.equal('sun1.opacity = (sun1.opacity / 100) * 90;', o);
-    });
-    j.on('parse', 'vOffset', function(err, o) {
-        assert.equal(true, (o === 100 || o === 250));
+    var stream = fs.createReadStream("./data/test1.json", {
+        'flags':'r', 
+        'encoding':'utf8', 
+        'bufferSize': 4100
     });    
-    j.on('match', /[oO]ffset$/, function(err, o) {
+    jaxon.factory()
+    .on('complete', function(o) {
+        assert.equal('[{"widget":{"debug":"on","window":{"title":"Sample Konfabulator Widget","name":"main_window","width":500,"height":500},"image":{"src":"Images/Sun.png","name":"sun1","hOffset":250,"vOffset":250,"alignment":"center"},"text":{"data":"Click Here","size":36,"style":"bold","name":"text1","hOffset":250,"vOffset":100,"alignment":"center","onMouseUp":"sun1.opacity = (sun1.opacity / 100) * 90;"}}}]', JSON.stringify(o));
+    })
+    .use(stream);
+};
+
+exports['test Jaxon1'] = function(beforeExit, assert) {   
+    jaxon.factory()
+    .on('parse', 'onMouseUp', function(err, o) {
+        assert.equal('sun1.opacity = (sun1.opacity / 100) * 90;', o);
+    })
+    .on('parse', 'vOffset', function(err, o) {
+        assert.equal(true, (o === 100 || o === 250));
+    })
+    .on('match', /[oO]ffset$/, function(err, o) {
         assert.equal(true, (o.value === 100 || o.value === 250));
-    });
-    var o = j.parse('file://./data/test1.json', null, function(err) {
+    })
+    .parse('file://./data/test1.json', null, function(err) {
         console.log(err);
     });
 };
 
 exports['test Jaxon2'] = function(beforeExit, assert) {   
-    var j = jaxon.factoryJaxon();
-    j.on('match', /^(.*)Pages(.*)$/, function(err, o) {
+    jaxon.factory()
+    .on('match', /^(.*)Pages(.*)$/, function(err, o) {
         switch(o.key) {
             case 'cachePagesTrack':
                 assert.equal(200, o.value);
@@ -63,27 +77,16 @@ exports['test Jaxon2'] = function(beforeExit, assert) {
                 assert.equal(10, o.value);
                 break;
         }
-    });
-    var o = j.parse('file://./data/test2.json', {}, function(err) {
+    })
+    .parse('file://./data/test2.json', {}, function(err) {
         console.log(err);
     });
 };
 
 exports['test Jaxon3'] = function(beforeExit, assert) {   
-    var j = jaxon.factoryJaxon();
-    j.on('parse', 'guid', function(err, o) {
-        console.log(o.split(/\-/));
-    });
-    j.on('match', /^(phone|email)$/, function(err, o) {
-        switch (o.key) {
-            case 'phone':
-                console.log(o.value.split(/\-/));
-                break;
-                
-            case 'email':
-                console.log(o.value.split(/\@/));
-                break;
-        }
+    var j = jaxon.factory();
+    j.on('match', /^(guid|phone|email)$/, function(err, o) {
+//        process.stdout.write(o.key + '\t' + o.value + '\n');
     });
     j.parse('http://f0e43e0449ff85b5a83a-8d88610b03123726d01e576fafeaf9d4.r60.cf2.rackcdn.com/test3.json', {}, function(err) {
         console.log(err);

@@ -141,7 +141,7 @@ exports['test TokenHandler'] = function(beforeExit, assert) {
         assert.equal('symbol', o.key);
     });    
     parser.onError(function(e) {
-        assert.equal('badly formed object', e.message);
+        assert.equal('Cannot read property \'key\' of null', e.message);
     });
     parser.onMatch(/^(foo|bar)$/, function(o) {
         assert.equal('bar', o.key);
