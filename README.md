@@ -78,7 +78,9 @@ jaxon.factory().on('error', function(err) {
 Bringing it all together:
 
 ```javascript
-jaxon.factory().on('parse', 'guid', function(o) { process.stdout.write(o + '\n'); }).parse('http://f0e43e0449ff85b5a83a-8d88610b03123726d01e576fafeaf9d4.r60.cf2.rackcdn.com/test3.json');
+jaxon.factory()
+.on('parse', 'guid', function(o) { process.stdout.write(o + '\n'); })
+.parse('http://f0e43e0449ff85b5a83a-8d88610b03123726d01e576fafeaf9d4.r60.cf2.rackcdn.com/test3.json');
 ```
 
 # Other stuff.

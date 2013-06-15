@@ -25,18 +25,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * The client component for stockserver.js
+ * 
+ * Fire up stockserver.js and then run this daemon and you should see stock ticker
+ * information output to STDOUT
+ */
+
+var net   = require('net');
 var jaxon = require('../lib/jaxon');
 
-exports['test StreamParser'] = function(beforeExit, assert) {   
-    var o = {};
-    var parser = jaxon.factoryStreamParser(o);
-    parser.consume('{"foo":"bar"}');
-    parser.parse();
-};
+var socket = net.createConnection(5000, '127.0.0.1');
 
-exports['test StreamParser2'] = function(beforeExit, assert) {   
-    var o = {};
-    var parser = jaxon.factoryStreamParser(o);
-    parser.consume(',{"tick":{"symbol":"FB","price":597}},{"tick":{"symbol":"FB","price":746}},{"tick":{"symbol":"FB","price":492}},{"tick":{"symbol":"YHOO","price":559}},{"tick":{"symbol":"FB","price":760}},{"tick":{"symbol":"APPL","price":683}},{"tick":{"symbol":"YHOO","price":840}},{"tick":{"symbol":"GRPN","price":10}},{"tick":{"symbol":"MSFT","price":127}},{"tick":{"symbol":"GOOG","price":162}},{"tick":{"symbol":"GRPN","price":967}},{"tick":{"symbol":"APPL","price":832}}');
-    parser.parse();
-};
+jaxon.factory()
+.on('parse', 'tick', function(err, tick) {
+    process.stdout.write(tick.symbol + '\t' + tick.price + '\n');
+})
+.use(socket);

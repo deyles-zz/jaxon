@@ -1,3 +1,8 @@
+var net = require('net');
+
+var clients = [];
+var tickers = ['YHOO', 'GOOG', 'FB', 'APPL', 'MSFT', 'GRPN'];
+
 /**
  * Copyright (c) 2013, Dan Eyles (dan@irlgaming.com)
  * All rights reserved.
@@ -25,18 +30,60 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var jaxon = require('../lib/jaxon');
+/**
+ * A little TCP socket server that broadcasts a badly formed stream of JSON encoded
+ * objects to all connected clients. The stream look like the following:
+ * 
+ * ,{"tick":{"symbol":"GOOG", "price":232}},{"tick":{"symbol":"YHOO", "price":90}}
+ * 
+ * Clients should connect to the server using 127.0.0.1:5000
+ * 
+ * Fire up the stockclient.js daemon after starting this server and watch Jaxon
+ * parse the stream and pipe the parsed ticker data to STDOUT in the following format:
+ * 
+ * GOOG 232
+ * YHOO 90
+ */
 
-exports['test StreamParser'] = function(beforeExit, assert) {   
-    var o = {};
-    var parser = jaxon.factoryStreamParser(o);
-    parser.consume('{"foo":"bar"}');
-    parser.parse();
+function random(from, to) {
+    return Math.floor(Math.random() * (to - from + 1) + from);
 };
 
-exports['test StreamParser2'] = function(beforeExit, assert) {   
-    var o = {};
-    var parser = jaxon.factoryStreamParser(o);
-    parser.consume(',{"tick":{"symbol":"FB","price":597}},{"tick":{"symbol":"FB","price":746}},{"tick":{"symbol":"FB","price":492}},{"tick":{"symbol":"YHOO","price":559}},{"tick":{"symbol":"FB","price":760}},{"tick":{"symbol":"APPL","price":683}},{"tick":{"symbol":"YHOO","price":840}},{"tick":{"symbol":"GRPN","price":10}},{"tick":{"symbol":"MSFT","price":127}},{"tick":{"symbol":"GOOG","price":162}},{"tick":{"symbol":"GRPN","price":967}},{"tick":{"symbol":"APPL","price":832}}');
-    parser.parse();
+function emit(message) {
+    clients.forEach(function(client) {
+        client.write(message); 
+    });
 };
+
+function emitprice() {
+    var ticker = tickers[random(0, 5)];
+    var price  = random(1, 1000);
+    emit(',' + JSON.stringify({
+        'tick':{
+            'symbol':ticker, 
+            'price':price
+        }
+    }));
+};
+
+function removeclient(client) {
+    for(var i=0; i < clients.length; i++) {
+        if (clients[i] == client) {
+            clients.splice(i, 1);
+            break;
+        }
+    }    
+};
+
+net.createServer(function (socket) {
+    clients.push(socket);
+    socket.on('end', function() {
+        removeclient(socket);
+    });
+}).listen(5000, function() {
+    setInterval(function() {
+        emitprice();
+    }, 300);
+});
+
+console.log("Stock price server running at port 5000\n");
